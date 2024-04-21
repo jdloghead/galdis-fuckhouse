@@ -1,0 +1,2 @@
+You can drag and drop the Assets folder into your decompile for adding the scripts and prefab (its already set up in the right places)
+Make sure you read the tutorial on gamebanana before trying to use these though!

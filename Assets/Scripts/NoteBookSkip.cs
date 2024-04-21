@@ -1,0 +1,71 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class NoteBookSkip : MonoBehaviour
+{
+	// Token: 0x0600098F RID: 2447 RVA: 0x00023FFB File Offset: 0x000223FB
+	private void Start()
+	{
+		//this.playerInput = ReInput.players.GetPlayer(0);
+		this.up = true;
+	}
+
+	// Token: 0x06000990 RID: 2448 RVA: 0x00024018 File Offset: 0x00022418
+	private void Update()
+	{
+		if (this.gc.mode == "endless")
+		{
+			if (this.respawnTime > 0f)
+			{
+				if ((base.transform.position - this.player.position).magnitude > 60f)
+				{
+					this.respawnTime -= Time.deltaTime;
+				}
+			}
+			else if (!this.up)
+			{
+				base.transform.position = new Vector3(base.transform.position.x, 4f, base.transform.position.z);
+				this.up = true;
+			}
+		}
+		if (Input.GetMouseButtonDown(0) && Time.timeScale != 0f)
+		{
+			Ray ray = Camera.main.ScreenPointToRay(new Vector3((float)(Screen.width / 2), (float)(Screen.height / 2), 0f));
+			RaycastHit raycastHit;
+			if (Physics.Raycast(ray, out raycastHit) && (raycastHit.transform.tag == "Notebook" & Vector3.Distance(this.player.position, base.transform.position) < this.openingDistance))
+			{
+				base.transform.position = new Vector3(base.transform.position.x, -20f, base.transform.position.z);
+				this.up = false;
+				this.respawnTime = 120f;
+				this.gc.CollectNotebook();
+				gc = this.gc;
+				bsc = this.bsc;
+				player.position = this.player.position;
+				if (gc.notebooks == 1 & !gc.spoopMode) // If this is the players first notebook and they didn't get any questions wrong, reward them with a quarter
+		         {
+			        gc.quarter.SetActive(true);
+			        gc.tutorBaldi.PlayOneShot(gc.aud_Prize);
+		        }
+			}
+		}
+	}
+
+	// Token: 0x0400066A RID: 1642
+	public float openingDistance;
+
+	// Token: 0x0400066B RID: 1643
+	public GameControllerScript gc;
+
+	// Token: 0x0400066C RID: 1644
+	public BaldiScript bsc;
+
+	// Token: 0x0400066D RID: 1645
+	public float respawnTime;
+
+	// Token: 0x0400066E RID: 1646
+	public bool up;
+
+	// Token: 0x0400066F RID: 1647
+	public Transform player;
+}
